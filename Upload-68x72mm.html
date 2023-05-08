@@ -1,0 +1,271 @@
+<style>
+
+
+.rounded-container {		
+	border-radius: 30px;
+	box-shadow: 0 4px 15px rgb(0 0 0 / 0.2);
+	padding: 10px;
+			
+}
+
+#video-preview-container {
+	width: 200px;
+	height: 200px;
+	position: relative;
+	overflow: hidden;
+	border: 2px solid #ccc;
+	display: none;
+}
+
+#video-preview {
+	position: absolute;
+	top: 0;
+	right: 0;
+	max-width: 115px;
+	height: 100%;
+}
+
+#image-preview {
+  	position: absolute;
+  	top: 0;
+  	left: 0;
+  	height: 100%;
+}
+
+.text-center {
+  	text-align: center;
+  	margin-bottom: 15px;
+  	margin-top: 30px;
+}
+
+.text-video {
+  	text-align: center;
+}
+
+button#btn-choose1, button#btn-choose2 {
+	background-color: #fff;
+	border: 2px dashed #555;
+	border-radius: 20px;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+	color: #333;
+	cursor: pointer;
+	
+	width: 45%;
+	height: 70px;
+	padding: 5px;
+	margin: 10px 5px;
+	display: inline-block;
+	vertical-align: top;
+	text-align: center;
+	text-transform: uppercase;
+	transition: all 0.5s ease;
+}
+
+button#btn-choose1.selected, button#btn-choose2.selected {
+	box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+	border: 5px solid #FF5757;
+	transform: scale(1.05);
+}
+
+
+
+.choose1, .choose2 {
+    display: none;
+}
+
+input[type=file] {
+  	margin-top: 10px;
+  	width: 100%;  
+  	padding: 5px;
+  	border-radius: 10px;
+  	border: 2px dashed #555;
+  	cursor: pointer;
+  	transition: transform .3s ease-in-out;
+  	font-size: initial;
+}
+
+input[type=file]:hover {
+  	transform: scale(1.02);
+}
+
+input[type=file]::file-selector-button {
+  	margin-right: 20px;
+  	border: none;
+  	background: #FF5757;
+  	padding: 10px 20px;
+  	border-radius: 10px;
+  	color: #fff;
+  	cursor: pointer;
+  	transition: background .2s ease-in-out;
+}
+
+input[type=file]::file-selector-button:hover {
+  	background: #ff3a3a;
+}
+
+input[type=text] {
+	margin-top: 10px;
+	width: 100%;
+	height: 30px;
+	font-size: large;
+	font-family: sans-serif;
+	border: 2px dashed #555 !important;
+	border-radius: 10px;
+}
+
+
+</style>
+
+
+
+<body>
+
+	<div class="text-center">
+    		<b>PERSONALIZE SEU FLIPBOOK</b>
+		</div> 
+		
+		<div class="rounded-container">
+			
+			<div class="text-video">
+    			<b>VÍDEO</b>
+  		</div>
+		  
+		  <button id="btn-choose1">
+			  Arquivos
+			  <span style="display: block; margin-top: 5px;">
+				<img src="https://cdn.shopify.com/s/files/1/0751/1936/2365/files/Video_Logo_40px.png?v=1682266694" style="height: 30px;">
+			</span>
+		</button>
+		<button id="btn-choose2">
+			Rede Sociais
+			<span style="display: block; margin-top:5px">
+				<img src="https://cdn.shopify.com/s/files/1/0751/1936/2365/files/Instagram_Logo.png?v=1682266694" style="height: 30px;">
+				<img src="https://cdn.shopify.com/s/files/1/0751/1936/2365/files/Tiktok_Logo_40px.png?v=1682266694" style="height: 30px;">
+			</span>
+		</button>
+		
+		<p class="line-item-property__field">
+			
+			
+		</p>	
+		<div class="choose1">
+			
+			<span style="display:block;">
+				➤ Escolha um vídeo de até 10 segundos
+			</span>
+			
+			<span style="display:block;">
+				➤ Sugerimos vídeos na vertical
+			</span>
+			
+			<input 
+			id="videoUpload" 
+			type="file" 
+			accept="video/*" 
+			name="properties[Seu video]" 
+			form="product-form-{{ section.id }}" 
+			required
+			>
+						
+		</div>		
+
+		<div class="choose2">
+			
+			<span style="display:block;">
+				➤ Coloque um link de vídeo do instagram ou Tiktok
+			</span>				
+			
+			<span style="display:block;">
+				➤ Apenas os 10 primeiros segundos serão usados
+			</span>
+			
+			<input 
+			id="videolink" 
+			type="text"
+			placeholder="Cole seu link aqui..." 
+			name="properties[Seu link de video]" 
+			form="product-form-{{ section.id }}" 
+			required
+			>
+			
+		</div>
+		
+		<div id="video-preview-container">
+			  
+			<video id="video-preview" muted autoplay loop>
+			</video>
+			  
+			<img id="image-preview" src="https://cdn.shopify.com/s/files/1/0751/1936/2365/files/Espaco_para_segura_vertical.png?v=1682266694" alt="Preview da imagem">
+		
+		</div>
+
+	</div>
+	
+</body>
+
+
+
+<script>
+	const btnChoose1 = document.querySelector('#btn-choose1');
+	const btnChoose2 = document.querySelector('#btn-choose2');
+	const choose1 = document.querySelector('.choose1');
+	const choose2 = document.querySelector('.choose2');
+	const field = document.querySelector('.line-item-property__field');
+	const videoInput = document.querySelector('input[id="videoUpload"]');
+	const videoPreview = document.querySelector('#video-preview');
+	const previewContainer = document.querySelector('#video-preview-container');
+
+	btnChoose1.addEventListener('click', () => {
+    	choose1.style.display = 'block';
+    	choose2.style.display = 'none';
+
+		// Verifica se há um arquivo selecionado
+		if (videoInput.files && videoInput.files[0]) {
+    		previewContainer.style.display = 'block';
+  		}
+		
+    	// Adiciona a div escolhida dentro do elemento pai
+    	if (btnChoose2.classList.contains('selected')) {
+        		field.removeChild(choose2);
+    		}
+    		field.appendChild(choose1);
+    		btnChoose1.classList.add('selected');
+    		btnChoose2.classList.remove('selected');
+	});
+
+	btnChoose2.addEventListener('click', () => {
+    	choose1.style.display = 'none';
+    	choose2.style.display = 'block';
+		previewContainer.style.display = 'none';
+
+    	// Adiciona a div escolhida dentro do elemento pai
+    	if (btnChoose1.classList.contains('selected')) {
+        	field.removeChild(choose1);
+    	}
+    	field.appendChild(choose2);
+    	btnChoose1.classList.remove('selected');
+    	btnChoose2.classList.add('selected');
+	});
+	
+	const showPreviewContainer = () => {
+  		previewContainer.style.display = 'inline-block';	
+	};
+
+	const hidePreviewContainer = () => {
+  		previewContainer.style.display = 'none';	
+	};
+
+	videoInput.addEventListener('change', () => {
+  		const file = videoInput.files[0];
+  		if (!file) {
+    		hidePreviewContainer();
+    		return;
+  		}
+  		if (!file.type.startsWith('video/')) return;
+  		const url = URL.createObjectURL(file);
+  		videoPreview.src = url;
+  		showPreviewContainer();		
+	});
+	
+
+</script>
